@@ -1,0 +1,47 @@
+<!-- logout.html -->
+{% load static %}
+<style>
+    body {
+        background-color: #f0f0f0; 
+    }
+    header {
+         background-color: #ffa200;
+         line-height: 10px;
+         padding: 10px;
+     }
+    h1 {
+        display: flex;
+        align-items: center;
+    }
+    h1 img {
+        margin-right: 10px; /* Adjust the margin as needed for spacing */
+    }
+    .footer {
+        background-color: blue; /* Set footer background color to blue */
+        color: white; /* Set footer text color to white */
+        padding: 10px; /* Adjust padding as needed */
+        text-align: center; /* Center text in the footer */
+    }
+</style>
+<header>  
+<h1><img src="{% static 'assets/img/gas-logo.png' %}" alt="Logo"> Logout</h1>
+</header>
+<form method="POST">
+    {% csrf_token %}
+
+    <button class="btn btn-light" type="button" id="logout-button">Logout</button>
+    <button class="btn btn-danger" type="button" id="back-button">Back</button> 
+</form>
+
+<script>  
+  // Add an event listener to the "Logout" button
+  document.getElementById("logout-button").addEventListener("click", function() {
+      // Add your logout logic here, such as redirecting to the login page or performing any necessary actions
+  });
+
+  // Add an event listener to the "Back" button
+  document.getElementById("back-button").addEventListener("click", function() {
+      // Redirect to the desired page when the "Back" button is clicked
+     window.location.href = "{% url 'index' %}";
+  });
+</script>

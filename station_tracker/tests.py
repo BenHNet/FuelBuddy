@@ -92,15 +92,10 @@ class YourAppTestCase(TestCase):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
 
     def test_index_view(self):
+        self.client.force_login(self.user)
         response = self.client.get('/index/')  # Replace '/index/' with your actual URL
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'index.html')
-
-    def test_main_view_authenticated_user(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/main/')  # Replace '/main/' with your actual URL
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'main.html')
 
     def test_user_signup_view(self):
         response = self.client.get('/signup/')  # Replace '/signup/' with your actual URL

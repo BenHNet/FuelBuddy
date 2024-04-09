@@ -19,39 +19,38 @@
     </style>
 </head>
 
-<body style="height: 1400px;--bs-body-bg: #e8eff5;background: linear-gradient(var(--bs-primary-bg-subtle) 55%, var(--bs-primary-border-subtle) 91%);">
+<body style="min-height: 100vh; background: linear-gradient(var(--bs-primary-bg-subtle) 55%, var(--bs-primary-border-subtle) 91%);">
 <nav class="navbar navbar-expand-md bg-primary py-3" style="background: rgb(108,117,125);">
-    <div class="container"><a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}"><span
-            class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
-            style="background: rgb(12,57,84);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                                    fill="currentColor" viewBox="0 0 16 16" class="bi bi-fuel-pump">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}"><span
+                class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
+                style="background: rgb(12,57,84);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                                        fill="currentColor" viewBox="0 0 16 16" class="bi bi-fuel-pump">
                         <path d="M3 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-5Z"></path>
                         <path d="M1 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8a2 2 0 0 1 2 2v.5a.5.5 0 0 0 1 0V8h-.5a.5.5 0 0 1-.5-.5V4.375a.5.5 0 0 1 .5-.5h1.495c-.011-.476-.053-.894-.201-1.222a.97.97 0 0 0-.394-.458c-.184-.11-.464-.195-.9-.195a.5.5 0 0 1 0-1c.564 0 1.034.11 1.412.336.383.228.634.551.794.907.295.655.294 1.465.294 2.081v3.175a.5.5 0 0 1-.5.501H15v4.5a1.5 1.5 0 0 1-3 0V12a1 1 0 0 0-1-1v4h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V2Zm9 0a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v13h8V2Z"></path>
                     </svg></span><span class="focus-ring focus-ring-primary" style="font-weight: bold;font-size: 24px;">Fuel Buddy</span></a>
         <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-4"><span
                 class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse flex-grow-0 order-md-first" id="navcol-4">
+        <div class="collapse navbar-collapse" id="navcol-4">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'fueldemand' %}">Fuel Demand</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'about' %}">About Us</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'feedback' %}">Feedback Form</a></li>
             </ul>
-            <!--  <div class="d-md-none my-2"><button class="btn btn-light me-2" type="button" href="{% url 'signup' %}" >Log In</button><button class="btn btn-primary" type="button" href="{% url 'login' %}" style="background: rgb(12,57,84);">Sign Up</button></div> -->
-        </div>
-        <div class="{% if request.user.is_authenticated %}hide-if-authenticated{% else %}show-if-authenticated{% endif %}">
-            <div class="d-none d-md-block">
+            <div class="{% if request.user.is_authenticated %}hide-if-authenticated{% else %}show-if-authenticated{% endif %}">
                 <a class="btn btn-primary" role="button" href="{% url 'login' %}"
-                   style="background: rgb(235, 238, 242); color: rgb(25, 28, 28);">Log In</a>
-                <a class="btn btn-primary" role="button" href="{% url 'signup' %}" style="background: rgb(12,57,84);">Sign
+                   style="background: rgb(12,57,84);">Log In</a>
+                <a class="btn btn-primary" role="button" href="{% url 'signup' %}"
+                   style="background: rgb(12,57,84);">Sign
                     Up</a>
             </div>
-        </div>
-        <div class="{% if request.user.is_authenticated %}show-if-authenticated{% else %}hide-if-authenticated{% endif %}">
-            <div class="d-none d-md-block">
+            <div class="{% if request.user.is_authenticated %}show-if-authenticated{% else %}hide-if-authenticated{% endif %}">
                 <div class="dropdown">
-                    <!--<p class="text-white">{{ request.user.username }}
-              <a class="btn btn-primary" role="button" href="{% url 'logout' %}" style="background: rgb(12,57,84);">Logout</a> </p> -->
-                    <a class="btn btn-primary dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown"
+                    <<p class="text-white">{{ request.user.username }}
+                    <a class="btn btn-primary" role="button" href="{% url 'logout' %}"
+                       style="background: rgb(12,57,84);">Logout</a></p>
+                    <a class="btn btn-primary dropdown-toggle" role="button" id="userDropdown"
+                       data-bs-toggle="dropdown"
                        aria-expanded="false">
                         {{ request.user.username }}
                     </a>
@@ -66,7 +65,7 @@
 
 <!-- Page content -->
 <div class="container">
-    <div class="text-center mt-5">
+    <div class="mt-5">
         {% block content %}
         {% endblock %}
     </div>

@@ -15,16 +15,12 @@ import folium
 # Create your views here.
 # Home page
 def index(request):
-    return render(request, 'index.html')
-
-# Main page
-def main(request):
   # Retrieve user information
   user = request.user
 
   # Pass user information to the template
   context = {'user': user}
-  return render(request, 'main.html', context)
+  return render(request, 'index.html', context)
 
 # signup page
 def user_signup(request):

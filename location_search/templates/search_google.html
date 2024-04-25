@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <style>
+
+        #map {
+            height: 100vh;
+        }
+
+    </style>
+    <div class="row">
+        <form method="post" , action="{% url 'submit' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Search Location:</label>
+                    <div class="form">
+                        <i class="fa fa-search"></i>
+                        <input id="autocomplete" name="location" type="text" class="form-control form-input"
+                               placeholder="Search by address, city or state">
+                        <span class="left-pan"><i class="fa fa-microphone"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Range Restriction:</label>
+                    <select class="form-select text-center" name="range" id="rangeSelect" required>
+                        <option value="" selected disabled>Select range</option>
+                        <option value="2.5 Miles">0-2.5 Miles</option>
+                        <option value="5 Miles">0-5 Miles</option>
+                        <option value="7.5 Miles">0-7.5 Miles</option>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <label>Fuel Type:</label>
+                    <select class="form-select text-center" name="gasType" id="gasSelect" required>
+                        <option value="" selected disabled>Select Fuel Type</option>
+                        <option value="Unleaded">Unleaded</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Diesel">Diesel</option>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <label>Search Preference:</label>
+                    <select class="form-select text-center" name="preferenceSelect" id="priceSelect"
+                            required>
+                        <option value="" selected disabled>Select Fuel Type</option>
+                        <option value="Unleaded">Unleaded</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Diesel">Diesel</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-2 mb-2">
+                <div class="col-md-12">
+                    <input class="btn btn btn-primary float-end" style="background: rgb(12,57,84);" type=submit
+                           value="Search">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script>
+        let markers = [];
+  
+        function initGoogle() {
+            const theLocation = {lat: {{ map_lat }}, lng: {{ map_lng }}};
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 14,
+                center: theLocation,
+            });
+            addMarkers();
+
+            autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('autocomplete'), {
+                    types: ['establishment'],
+                    componentRestrictions: {'country': ["US"]},
+                    fields: ['place_id', 'geometry', 'name']
+                }
+            );
+        }
+
+        function addMarkers() {
+            clearMarkers();
+
+            var json_data = "{{ stations }}";
+            json_data = json_data.replaceAll("&#x27;", '"');
+            json_parse = JSON.parse(json_data);
+
+            for (var i = 0; i < json_parse.length; i++) {
+                result = json_parse[i];
+
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: {lat: result.latitude, lng: result.longitude},
+                    title: result.station_name
+                });
+                
+                markers.push(marker)
+            }
+        }
+
+        function clearMarkers() {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&callback=initGoogle&libraries=maps,marker,places&v=beta">
+    </script>
+{% endblock %}

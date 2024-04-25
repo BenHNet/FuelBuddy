@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <style>
+        /*Search bar*/
+        body {
+            background: #d1d5db;
+
+        }
+
+        .height {
+            height: 100vh;
+        }
+
+        .form {
+            position: relative;
+        }
+
+        .form .fa-search {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #9ca3af;
+        }
+
+        .form span {
+            position: absolute;
+            right: 17px;
+            top: 13px;
+            padding: 2px;
+            border-left: 1px solid #d1d5db;
+        }
+
+        .left-pan {
+            padding-left: 7px;
+        }
+
+        .left-pan i {
+            padding-left: 10px;
+        }
+
+        .form-input {
+            height: 55px;
+            text-indent: 33px;
+            border-radius: 10px;
+        }
+
+        .form-input:focus {
+            box-shadow: none;
+            border: none;
+        }
+
+        /* Dropdown menu */
+        .dropbtn {
+            background-color: var(--bs-white);
+            color: black;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
+
+    </style>
+
+    <!-- aligh items next to eachother -->
+    <div class="row height d-flex justify-content-left align-items-center" style="padding-left: 5px;">
+
+        <div class="col-md-6">
+            <form method="post" , action="{% url 'submit' %}">
+                {% csrf_token %}
+                <!-- Search bar from https://bbbootstrap.com/snippets/bootstrap-5-search-bar-microphone-icon-inside-12725910 -->
+                <div class="form">
+                    <i class="fa fa-search"></i>
+                    <input id="autocomplete" name="location" type="text" class="form-control form-input"
+                           placeholder="Search by address, city or state">
+                    <span class="left-pan"><i class="fa fa-microphone"></i></span>
+
+                    <script>
+                        function initAutocomplete() {
+                            autocomplete = new google.maps.places.Autocomplete(
+                                document.getElementById('autocomplete'), {
+                                    types: ['establishment'],
+                                    componentRestrictions: {'country': ["US"]},
+                                    fields: ['place_id', 'geometry', 'name']
+                                }
+                            );
+                        }
+                    </script>
+
+                    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&libraries=places&callback=initAutocomplete"
+                            async defer></script>
+
+
+                </div>
+                <section class="py-4 py-xl-3">
+                    <div class="container">
+                        <div class="text-white bg-primary border rounded border-0 border-primary d-flex flex-column justify-content-between flex-lg-row p-2 p-md-3"
+                             style="box-shadow: 4px 2px 4px var(--bs-primary-text-emphasis);">
+                            <div class="pb-1 pb-lg-0">
+                                <h1 class="fw-bold mb-1"
+                                    style="text-shadow: 2px 0px var(--bs-primary-text-emphasis);">Range
+                                    Restriction</h1>
+
+
+                            </div>
+                            <!-- Dropdown from https://www.w3schools.com/howto/howto_css_dropdown.asp -->
+                            <input type="hidden" id="rangeSelect" name="range">
+                            <div class="dropdown">
+                                <button id="dropdownButton" class="dropbtn btn btn-light fs-5 py-2 px-4 my-2">Select
+                                    range
+                                </button>
+                                <div class="dropdown-content">
+                                    <a style="color: black;" onclick="changeText('2.5 Miles')">0-2.5 Miles</a>
+                                    <a style="color: black;" onclick="changeText('5 Miles')">0-5 Miles</a>
+                                    <a style="color: black;" onclick="changeText('7.5 Miles')">0-7.5 Miles</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <script>
+                    function changeText(text) {
+                        document.getElementById('dropdownButton').innerText = text;
+                        document.getElementById('rangeSelect').value = text;
+                    }
+                </script>
+
+                <section class="py-4 py-xl-3">
+                    <div class="container">
+                        <div class="text-white bg-primary border rounded border-0 border-primary d-flex flex-column justify-content-between flex-lg-row p-2 p-md-3"
+                             style="box-shadow: 4px 2px 4px var(--bs-primary-text-emphasis);">
+                            <div class="pb-1 pb-lg-0">
+                                <h1 class="fw-bold mb-1"
+                                    style="text-shadow: 2px 0px var(--bs-primary-text-emphasis);">Fuel Type</h1>
+
+                            </div>
+                            <!-- Dropdown from https://www.w3schools.com/howto/howto_css_dropdown.asp -->
+                            <input type="hidden" id="gasSelect" name="gasType">
+                            <div class="dropdown">
+                                <button id="dropdownButton1" class="dropbtn btn btn-light fs-5 py-2 px-4 my-2">
+                                    Select Fuel Type
+                                </button>
+                                <div class="dropdown-content">
+                                    <a style="color: black;" onclick="changeText1('Unleaded')">Unleaded</a>
+                                    <a style="color: black;" onclick="changeText1('Premium')">Premium</a>
+                                    <a style="color: black;" onclick="changeText1('Diesel')">Diesel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        function changeText1(text) {
+                            document.getElementById('dropdownButton1').innerText = text;
+                            document.getElementById('gasSelect').value = text;
+                        }
+                    </script>
+
+
+                    <section class="py-4 py-xl-3">
+                        <div class="container">
+                            <div class="text-white bg-primary border rounded border-0 border-primary d-flex flex-column justify-content-between flex-lg-row p-2 p-md-3"
+                                 style="box-shadow: 4px 2px 4px var(--bs-primary-text-emphasis);">
+
+                                <div class="pb-1 pb-lg-0">
+                                    <h1 class="fw-bold mb-1"
+                                        style="text-shadow: 2px 0px var(--bs-primary-text-emphasis);">Search
+                                        Preference</h1>
+                                </div>
+                                <input type="hidden" id="priceSelect" name="preferenceSelect">
+                                <div class="dropdown">
+                                    <button id="dropdownButton2" class="dropbtn btn btn-light fs-5 py-2 px-4 my-2">
+                                        Search by
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <a style="color: black;" onclick="changeText2('Unleaded')">Unleaded</a>
+                                        <a style="color: black;" onclick="changeText2('Premium')">Premium</a>
+                                        <a style="color: black;" onclick="changeText2('Diesel')">Diesel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            function changeText2(text) {
+                                document.getElementById('dropdownButton2').innerText = text;
+                                document.getElementById('priceSelect').value = text;
+                            }
+                        </script>
+
+
+                    </section>
+                </section>
+
+                <input class="dropbtn btn btn-light fs-5 py-2 px-4 my-2" type=submit value="Submit">
+            </form>
+        </div>
+    </div>
+    <div class="row height d-flex justify-content-left align-items-center" style="padding-left: 5px;">
+        <div class="col-md-6">
+            {{ map | safe }}
+        </div>
+    </div>
+
+{% endblock %}

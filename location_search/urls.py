@@ -1,11 +1,15 @@
 from django.urls import path
-from . import views
-from station_tracker import views as statTrackerViews;
+from . import views, views_google
 
 urlpatterns = [
-    path('', views.map_view, name='findGas'),
+    path('', views_google.map_get, name='findGas'),
     # Other paths go here
     path('search',views.submit, name='submit'),
     path('searchPage', views.searchPage, name='searchPage'),
-    path('updatePrice/<int:gas_station_id>', views.updatePrice, name = 'updatePrice')
+    path('updatePrice/<int:gas_station_id>', views.updatePrice, name = 'updatePrice'),
+
+    # Google Paths
+    path('search_google', views_google.map_submit, name='submit'),
+    path('searchPage_google', views_google.map_get, name='searchPage'),
+    path('updatePrice_google/<int:gas_station_id>', views_google.updatePrice, name='updatePrice')
 ]

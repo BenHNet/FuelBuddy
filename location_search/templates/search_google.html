@@ -79,6 +79,7 @@
             map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 14,
                 center: theLocation,
+                mapId: "FUEL_BUDDY_MAP", // Map ID is required for advanced markers.
             });
             addMarkers();
 
@@ -98,12 +99,38 @@
             json_parse = JSON.parse(decodeHtml(json_data));
 
             for (var i = 0; i < json_parse.length; i++) {
-                result = json_parse[i];
+                const result = json_parse[i];
 
-                marker = new google.maps.Marker({
+                const pin = new google.maps.marker.PinElement({
+                    background: result.icon_background_color,
+                    borderColor: "rgb(128, 128, 128)",
+                    glyph: new URL(String(result.icon)),
+                    scale: 1.5,
+                });
+
+                const marker = new google.maps.marker.AdvancedMarkerElement({
                     map: map,
                     position: {lat: result.latitude, lng: result.longitude},
-                    title: result.station_name
+                    title: result.station_name,
+                    content: pin.element
+                });
+
+                // Create an info window to share between markers.
+                const infoWindow = new google.maps.InfoWindow();
+
+                // Add a click listener for each marker, and set up the info window.
+                marker.addListener("click", ({domEvent, latLng}) => {
+                    const {target} = domEvent;
+                    
+                    const content = "<h4>" + result.station_name + 
+                        "</h4><div><p>Unleaded: " + result.regular_gas_price + "</p><p>Premium: " + result.premium_gas_price + 
+                        "</p><p>Diesel: " + result.diesel_price + "</p><a href='http://maps.google.com/?q=" + 
+                        result.address + "' target='_blank'>Directions</a>&nbsp&nbsp<a href='updatePrice_google/" + result.latitude + '+' + result.longitude + 
+                        "'>Update gas prices</a></div>";
+                    
+                    infoWindow.close();
+                    infoWindow.setContent(content);
+                    infoWindow.open(marker.map, marker);
                 });
 
                 markers.push(marker)
@@ -120,6 +147,10 @@
         function decodeHtml(str) {
             const doc = new DOMParser().parseFromString(str, "text/html");
             return doc.documentElement.textContent;
+        }
+
+        function buildInfoWindow(result) {
+            return "<h4>" + result.station_name + "</h4><div><p>Unleaded: None</p><p>Premium: None</p><p>Diesel: None</p><a href='http://maps.google.com/?q=" + result.address + "'>Directions</a>&nbsp&nbsp<a href='updatePrice_google/" + result.latitude + '+' + result.longitude + "'>Update gas prices</a></div>";
         }
 
     </script>

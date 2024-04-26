@@ -11,5 +11,5 @@ urlpatterns = [
     # Google Paths
     path('search_google', views_google.map_submit, name='submit'),
     path('searchPage_google', views_google.map_get, name='searchPage'),
-    path('updatePrice_google/<int:gas_station_id>', views_google.updatePrice, name='updatePrice')
+    path('updatePrice_google/<str:gas_station_location>', views_google.updatePrice, name='updatePrice')
 ]

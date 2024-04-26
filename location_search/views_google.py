@@ -1,6 +1,7 @@
 import json
 import os
 
+import numpy
 import requests
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -21,19 +22,6 @@ def map_submit(request):
         search = Search(location=search, range=range, fuelType=fuelType, searchPref=searchPref)
         search.save()
 
-        my_secret = os.environ['api_key']
-
-        locationInfo = geocode(search, my_secret)
-
-        if locationInfo['results']:
-            print(
-                "#########################################################################################################################################################################################################################################################################")
-            lat_lng = locationInfo['results'][0]['geometry']['location']
-
-            # Convert miles to meters and then pass to the API make database entries
-            apiRange = (convToRange(range) * 1609.34) / 2
-            gas_station_database(request, lat_lng, apiRange, my_secret)
-
         return render(request, 'search_google.html', get_map_data_with_search_data(request, search, range, searchPref))
 
 
@@ -44,21 +32,14 @@ def map_get(request):
 
 
 # Price Update method
-def updatePrice(request, gas_station_id):
-    gas_station = Gas_Station.objects.get(id=gas_station_id)
-    print(gas_station_id)
+def updatePrice(request, gas_station_location):
+    location = gas_station_location.split("+")
+    gas_station = Gas_Station.objects.get(latitude=location[0], longitude=location[1])
 
     if request.method == 'POST':
-        U80 = request.POST.get('regular_gas_price', '')
-        U85 = request.POST.get('premium_gas_price', '')
-        Diesel = request.POST.get('diesel_price', '')
-
-        # Get the gas station from the database
-        gas_station = Gas_Station.objects.get(id=gas_station_id)
-
-        gas_station.regular_gas_price = U80
-        gas_station.premium_gas_price = U85
-        gas_station.diesel_price = Diesel
+        gas_station.regular_gas_price = request.POST.get('regular_gas_price', '')
+        gas_station.premium_gas_price = request.POST.get('premium_gas_price', '')
+        gas_station.diesel_price = request.POST.get('diesel_price', '')
 
         # Save the gas station
         gas_station.save()
@@ -66,7 +47,9 @@ def updatePrice(request, gas_station_id):
         return redirect('findGas')
 
     # If the request method is not POST, render the updatePrice.html template
-    context = {"gas_station": gas_station}
+    context = {"gas_station": gas_station,
+               "url_param": numpy.format_float_positional(gas_station.latitude) + '+' + numpy.format_float_positional(
+                   gas_station.longitude)}
     return render(request, 'updatePrice.html', context)
 
 
@@ -87,35 +70,12 @@ def nearby_gas_search(location, radius, api_key):
     location = f"{location['lat']},{location['lng']}"
     params = {
         "location": location,
-        "radius": (radius * 1609.34)/2, # Convert to Miles
+        "radius": (radius * 1609.34) / 2,  # Convert to Miles
         "type": "gas_station",
         "key": api_key,
     }
     response = requests.get(base_url, params=params)
     return response.json()
-
-
-def gas_station_database(request, location, radius, api_key):
-    # Get data from the Google Places API
-    data = nearby_gas_search(location, radius, api_key)
-
-    # Iterate over each result in the data
-    for result in data['results']:
-        # Check if a GasStation object with the same station_name and address already exists
-        try:
-            gas_station = Gas_Station.objects.get(station_name=result['name'], address=result['vicinity'])
-        except Gas_Station.DoesNotExist:
-            # If it doesn't exist, create a new GasStation object
-            gas_station = Gas_Station(
-                station_name=result['name'],
-                address=result['vicinity'],
-                latitude=result['geometry']['location']['lat'],
-                longitude=result['geometry']['location']['lng'],
-
-            )
-
-            # Save the GasStation object to the database
-            gas_station.save()
 
 
 # Initital map rendering
@@ -140,16 +100,46 @@ def get_map_data_with_search_data(request, search, userRange, searchPref):
     # Now add everything to the context so we can use it on the map
     context['map_lat'] = lat = lat_lng['lat']
     context['map_lng'] = lat_lng['lng']
-    context['stations'] = json.dumps([
-            {
-                "station_name": result['name'],
-                "address": result['vicinity'],
-                "latitude": result['geometry']['location']['lat'],
-                "longitude": result['geometry']['location']['lng']
-            }
-            for result in nearby_gas_search(locationInfo['results'][0]['geometry']['location'], convToRange(userRange), my_secret)['results']
-        ])
 
+    # Search Google for the gas stations
+    data = nearby_gas_search(locationInfo['results'][0]['geometry']['location'], convToRange(userRange), my_secret)[
+        'results']
+
+    stations = []
+    # Iterate over each result in the data and save it to the DB and merge the results
+    # from Google and the DB
+    for result in data:
+        # Check if a GasStation object with the same station_name and address already exists
+        try:
+            gas_station = Gas_Station.objects.get(latitude=result['geometry']['location']['lat'],
+                                                  longitude=result['geometry']['location']['lng'])
+        except Gas_Station.DoesNotExist:
+            # If it doesn't exist, create a new GasStation object
+            gas_station = Gas_Station(
+                station_name=result['name'],
+                address=result['vicinity'],
+                latitude=result['geometry']['location']['lat'],
+                longitude=result['geometry']['location']['lng'],
+            )
+
+            # Save the GasStation object to the database
+            gas_station.save()
+
+        stations.append({
+            "station_name": result['name'],
+            "address": result['vicinity'],
+            "latitude": result['geometry']['location']['lat'],
+            "longitude": result['geometry']['location']['lng'],
+            "icon": result['icon'],
+            "icon_background_color": result['icon_background_color'],
+            "icon_mask_base_uri": result['icon_mask_base_uri'],
+            "business_status": result['business_status'],
+            "regular_gas_price": str(gas_station.regular_gas_price),
+            "premium_gas_price": str(gas_station.premium_gas_price),
+            "diesel_price": str(gas_station.diesel_price)
+        })
+
+    context['stations'] = json.dumps(stations)
 
     return context
 

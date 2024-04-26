@@ -37,7 +37,7 @@
         </div>
     </section>
 
-    <form method="post" action="{% url 'updatePrice' gas_station.id %}">
+    <form method="post" action="{% url 'updatePrice' url_param %}">
         {% csrf_token %}
         <div class="form-row">
             <div class="form-group col-md-6">

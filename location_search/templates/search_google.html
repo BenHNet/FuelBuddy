@@ -31,6 +31,9 @@
                         <option value="2.5 Miles">0-2.5 Miles</option>
                         <option value="5 Miles">0-5 Miles</option>
                         <option value="7.5 Miles">0-7.5 Miles</option>
+                        <option value="10 Miles">0-10 Miles</option>
+                        <option value="15 Miles">0-15 Miles</option>
+                        <option value="20 Miles">0-20 Miles</option>
                     </select>
                 </div>
                 <div class="col-sm-4">
@@ -69,7 +72,7 @@
 
     <script>
         let markers = [];
-  
+
         function initGoogle() {
             const theLocation = {lat: {{ map_lat }}, lng: {{ map_lng }}};
 
@@ -92,8 +95,7 @@
             clearMarkers();
 
             var json_data = "{{ stations }}";
-            json_data = json_data.replaceAll("&#x27;", '"');
-            json_parse = JSON.parse(json_data);
+            json_parse = JSON.parse(decodeHtml(json_data));
 
             for (var i = 0; i < json_parse.length; i++) {
                 result = json_parse[i];
@@ -103,7 +105,7 @@
                     position: {lat: result.latitude, lng: result.longitude},
                     title: result.station_name
                 });
-                
+
                 markers.push(marker)
             }
         }
@@ -113,6 +115,11 @@
                 markers[i].setMap(null);
             }
             markers = [];
+        }
+
+        function decodeHtml(str) {
+            const doc = new DOMParser().parseFromString(str, "text/html");
+            return doc.documentElement.textContent;
         }
 
     </script>

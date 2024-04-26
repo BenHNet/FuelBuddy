@@ -1,3 +1,4 @@
+import json
 import os
 
 import requests
@@ -139,15 +140,15 @@ def get_map_data_with_search_data(request, search, userRange, searchPref):
     # Now add everything to the context so we can use it on the map
     context['map_lat'] = lat = lat_lng['lat']
     context['map_lng'] = lat_lng['lng']
-    context['stations'] = [
+    context['stations'] = json.dumps([
             {
-                'station_name': result['name'],
-                'address': result['vicinity'],
-                'latitude': result['geometry']['location']['lat'],
-                'longitude': result['geometry']['location']['lng']
+                "station_name": result['name'],
+                "address": result['vicinity'],
+                "latitude": result['geometry']['location']['lat'],
+                "longitude": result['geometry']['location']['lng']
             }
             for result in nearby_gas_search(locationInfo['results'][0]['geometry']['location'], convToRange(userRange), my_secret)['results']
-        ]
+        ])
 
 
     return context
@@ -158,6 +159,12 @@ def convToRange(userRange):
         return 2.5
     elif userRange == '5 Miles':
         return 5
+    elif userRange == '7.5 Miles':
+        return 7.5
+    elif userRange == '10 Miles':
+        return 10
+    elif userRange == '15 Miles':
+        return 15
     elif userRange == '20 Miles':
         return 20
     else:

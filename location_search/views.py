@@ -15,10 +15,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from station_tracker.models import Gas_Station
 import os
 
-
-
-
-
 #Submit on main page, updates search and is the core of functionality
 def submit(request):
     if request.method == 'POST':
@@ -61,7 +57,7 @@ def searchPage(request):
 
     map_context['GOOGLE_API_KEY'] = my_secret
 
-    return render(request,'stuff.html', map_context)
+    return render(request, 'search.html', map_context)
 
 
 #Price Update method
@@ -101,7 +97,7 @@ def updatePrice(request, gas_station_id):
 #Google maps API functions
 def my_view(request):
     context = {'GOOGLE_API_KEY': os.environ['api_key']}
-    return render(request, 'stuff.html', context)
+    return render(request, 'search.html', context)
 
 
 def geocode(address, api_key):
@@ -212,7 +208,7 @@ def map_view(request):
 
     context['GOOGLE_API_KEY'] = my_secret
     
-    return render(request, 'stuff.html', context)
+    return render(request, 'search.html', context)
 
 
 #After search rendering

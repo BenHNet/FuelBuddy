@@ -60,6 +60,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = ['https://fuelbuddy.azurewebsites.net']
+
 ROOT_URLCONF = 'gas_station_tracker.urls'
 
 TEMPLATES = [

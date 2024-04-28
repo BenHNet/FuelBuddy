@@ -78,10 +78,10 @@ def nearby_gas_search(location, radius, api_key):
     return response.json()
 
 
-# Initital map rendering
+# Initial map rendering
 # returns render
 def get_map_data(request):
-    # get the map data with the inital/default values
+    # get the map data with the initial/default values
     return get_map_data_with_search_data(request, request.session.get('location', 'Colorado Springs'), '5 Miles', '')
 
 
@@ -92,7 +92,7 @@ def get_map_data_with_search_data(request, search, userRange, searchPref):
     location = search
     request.session['location'] = str(location)
 
-    # Get lattitude and longitude from google maps api
+    # Get latitude and longitude from google maps api
     my_secret = os.environ['api_key']
     locationInfo = geocode(location, my_secret)
     lat_lng = locationInfo['results'][0]['geometry']['location']

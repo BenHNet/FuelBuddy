@@ -2,17 +2,32 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .forms import UserCreationForm, LoginForm, GasPriceUpdateForm, FeedbackForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import UserCreationForm, LoginForm, GasPriceUpdateForm, FeedbackForm, Feedback
 from .models import Customer, GasStationOwner, Feedback, AboutUs, Gas_Station
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from geopy.geocoders import Nominatim
 from geopy.distance import Geodesic
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.urls import reverse
 import folium
 
 # Create your views here.
+def is_admin(user):
+    return user.is_staff
+
+@login_required
+@user_passes_test(is_admin)
+def admin_manage(request):
+    feedback_list = Feedback.objects.all()
+    if request.method == 'POST':
+        if 'delete_feedback' in request.POST:
+            feedback_id = request.POST.get('delete_feedback')
+            Feedback.objects.filter(id=feedback_id).delete()
+            return redirect('admin_manage')
+
+    return render(request, 'station_tracker/admin_manage.html', {'feedback_list': feedback_list})
 # Home page
 def index(request):
   # Retrieve user information
@@ -112,12 +127,42 @@ def render_feedback_form(request):
   if request.method == 'POST':
     form = FeedbackForm(request.POST)
     if form.is_valid():
-      form.save()
+      feedback_instance = form.save() # Saving the form data to the database
       messages.success(request, "Your feedback has been submitted!")
-      return redirect('feedback')
+      # return redirect('feedback')
+      #return render(request, 'display_feedback.html', {'form': form}) # Redirect to a new URL to display the form data:
+      return redirect('feedback_success', id=feedback_instance.id)  # Redirect to another view that can display the submitted data or send an email, etc.
   else: 
     form = FeedbackForm()
-  return render(request, 'feedback.html', {'form': form})
+  #return render(request, 'feedback.html', {'form': form})
+   # Fetch all feedback entries to display below the form
+    feedback_entries = Feedback.objects.all()
+    return render(request, 'feedback.html', {'form': form, 'feedback_entries': feedback_entries})
+
+def feedback_success(request, id=None):
+    if id:
+        feedback_entries = Feedback.objects.filter(id=id)
+    else:
+        feedback_entries = Feedback.objects.all()
+    return render(request, 'feedback_success.html', {'feedback_entries': feedback_entries})
+
+def delete_feedback(request, id):
+    if request.user.is_staff:
+        feedback = get_object_or_404(Feedback, id=id)
+        feedback.delete()
+        return HttpResponseRedirect(reverse('feedback_success'))
+        #return render(request, 'feedback_success.html', {'feedback_entries': feedback_entries})
+    else:
+        return HttpResponse("Unauthorized", status=401)
+    
+def all_feedback_success(request):
+    feedback_entries = Feedback.objects.all()
+    return render(request, 'feedback_success.html', {'feedback_entries': feedback_entries})
+
+
+    feedback = get_object_or_404(Feedback, id=id)
+    feedback.delete()
+    return HttpResponseRedirect(reverse('feedback_success'))
 
 def map_view(request):
 

@@ -13,8 +13,7 @@
                     {% if messages %}
                         <ul class="messages">
                             {% for message in messages %}
-                                <li{% if message.tags %} class="{{ message.tags }} alert alert-success"{% endif %}
-                                                         role="alert">{{ message }}</li>
+                                <li{% if message.tags %} class="{{ message.tags }} alert alert-success"{% endif %} role="alert">{{ message }}</li>
                             {% endfor %}
                         </ul>
                     {% endif %}
@@ -22,12 +21,10 @@
             </div>
         </div>
         <!--Start Form Body-->
-        <form id="contactForm-1" action="/feedback/" method="post"><input class="form-control" type="hidden"
-                                                                          name="Introduction"
-                                                                          value="This email was sent from www.mywebsite.com"><input
-                class="form-control" type="hidden" name="subject" value="My Contact Form"><input class="form-control"
-                                                                                                 type="hidden" name="to"
-                                                                                                 value="email@mywebsite.com">
+        <form id="contactForm-1" action="/feedback/" method="post">
+            <input class="form-control" type="hidden" name="Introduction" value="This email was sent from www.mywebsite.com"><input
+                class="form-control" type="hidden" name="subject" value="My Contact Form">
+                  <input class="form-control" type="hidden" name="to" value="email@mywebsite.com">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-6">
@@ -57,8 +54,7 @@
                     <div class="form-group mb-3"><label class="form-label" for="comments">What are your
                         Comments/Concerns?</label> {{ form.comments }}</div>
                     <div class="form-group mb-3">
-                        <button class="btn btn-primary d-block w-100" type="submit">Send <i
-                                class="fa fa-chevron-circle-right"></i></button>
+                        <button class="btn btn-primary d-block w-100" type="submit">Send <i class="fa fa-chevron-circle-right"></i></button>
                     </div>
                     <hr>
                 </div>
@@ -91,7 +87,7 @@
                             <div><span>55 Icannot Dr.</span></div>
                             <div><span>Daytona Beach, FL 81500</span></div>
                             <div><abbr data-toggle="tooltip" data-placement="top"
-                                       title="Office Phone: 555-867-5309">O:</abbr> 555-867-5309
+                                       title="Office Phone: 555-867-5309">Off:</abbr> 555-867-5309
                             </div>
                         </div>
                     </div>
@@ -99,6 +95,31 @@
             </div>
         </form>
         <!-- End Form Body -->
+            <!-- New Section for Displaying Feedbacks -->
+    <section class="mt-4">
+        <h2>User Feedback
+            {% if request.user.is_staff %}
+            <!-- Button visible only to admin users -->
+            <a href="{% url 'feedback_success' %}" class="btn btn-info" style="margin-left: 10px;">Admin Check</a>
+             {% endif %}
+        </h2>
+        {% if feedback_entries %}
+            <div class="list-group">
+                {% for feedback in feedback_entries %}
+                <div class="list-group-item">
+                    <h5 class="mb-1">Feedback from {{ feedback.name }}</h5>
+                    <p><strong>Email:</strong> {{ feedback.email }}</p>
+                    <p><strong>Phone:</strong> {{ feedback.phone }}</p>
+                    <p><strong>Gas Station Address:</strong> {{ feedback.gasStationAddr }}</p>
+                    <p><strong>Comments:</strong> {{ feedback.comments }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No feedback has been submitted yet.</p>
+        {% endif %}
+    </section>
+    <!-- Existing content... -->
     </div>
 
 {% endblock %}

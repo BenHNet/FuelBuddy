@@ -36,29 +36,31 @@
                 <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'fueldemand' %}">Fuel Demand</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'about' %}">About Us</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'feedback' %}">Feedback Form</a></li>
+                {% if request.user.is_staff %}
+                <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'admin_manage' %}">Admin Management</a></li>
+                {% endif %}
             </ul>
             <div class="{% if request.user.is_authenticated %}hide-if-authenticated{% else %}show-if-authenticated{% endif %}">
                 <a class="btn btn-primary" role="button" href="{% url 'login' %}"
                    style="background: rgb(12,57,84);">Log In</a>
                 <a class="btn btn-primary" role="button" href="{% url 'signup' %}"
-                   style="background: rgb(12,57,84);">Sign
-                    Up</a>
+                   style="background: rgb(12,57,84);">Sign Up</a>
             </div>
             <div class="{% if request.user.is_authenticated %}show-if-authenticated{% else %}hide-if-authenticated{% endif %}">
-                <div class="dropdown">
-                    <<p class="text-white">{{ request.user.username }}
-                    <a class="btn btn-primary" role="button" href="{% url 'logout' %}"
-                       style="background: rgb(12,57,84);">Logout</a></p>
-                    <a class="btn btn-primary dropdown-toggle" role="button" id="userDropdown"
+               <div class="dropdown">
+                 <p class="text-white"> Welcome, {{ request.user.username }}
+                   <a class="btn btn-primary" role="button" href="{% url 'logout' %}"
+                       style="background: rgb(12,57,84);">Logout</a></p> 
+                 <!--    <a class="btn btn-primary dropdown-toggle" role="button" id="userDropdown"
                        data-bs-toggle="dropdown"
                        aria-expanded="false">
                         {{ request.user.username }}
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                   <ul class="dropdown-menu" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
+                    </ul> -->
+                </div> 
+            </div> 
         </div>
     </div>
 </nav>

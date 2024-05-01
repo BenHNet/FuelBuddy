@@ -21,12 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
-#SECRET_KEY = 'SEC_CS5340_FuelBuddy'
+#SECRET_KEY = os.getenv('SECRET_KEY')
+#SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'optional_default_secret_key')
 
-if SECRET_KEY is None:
-  print("Please setup a SECRET_KEY in the Secrets (Environment variables) tab. See README.md for more.")
-  exit(1)
+SECRET_KEY = 'SEC_CS5340_FuelBuddy'
+
+#if SECRET_KEY is None:
+ # print("Please setup a SECRET_KEY in the Secrets (Environment variables) tab. See README.md for more.")
+  #exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

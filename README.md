@@ -1,14 +1,27 @@
-# Group 3 F2023
-## Gas Price Tracker
-===============================================================================================================
-"We, Group-3 (Innovative Thinkers), being an original contributor to the software project known as "Fuel Buddy", a project developed solely as an academic exercise for the CS 5300 course taught at the University of Colorado Colorado Springs, do hereby agree to apply the MIT Licence to the Fuel Buddy project.
+# Fuel Buddy
 
-The MIT License (MIT)
-Copyright © 2024  Dr.Kristen Walcott , Himaja Ryali, Chris Riggan, Gouthami Sanugomula , Jasmine Brown, Matthew Kolarik, Nicholas Dalton
+## Purpose
+The Gas Price Tracker is an online platform designed to assist customers in monitoring and comparing the fuel prices at various gas stations in their local area which is a reliable way to stay updated about the fluctuations in fuel prices.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+### Features
+- Location range restriction
+- Feedback form
+- Rewards
+- User Authentication
+- Location-based search
+- Update Gas Prices
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+## Current Technology Used
+- Python
+- [Django](https://docs.djangoproject.com/en/5.0/) for the Web Application Framework
+- SqlLite for the Database with Django's out of the box ORM tooling
+- Django Test for the automated testing
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-===============================================================================================================
+## Running Locally
+
+We use PyCharm to do our local development.  It runs the project and allows easy dubugging.  However, you can use whatever IDE you like.
+
+In order to run the project locally you will need to setup the following environment variables:
+- DJANGO_SETTINGS_MODULE = gas_station_tracker.settings
+- api_key = "A valid API key for Google Maps"
+- SECRET_KEY = a standard secret generated for Django project 
